@@ -10,23 +10,54 @@ import CoreData
 
 struct MainWeatherViewStatusView: View {
     var imageName: String
-    var temperature: Int
+    var weatherData: WeatherData?
     
     var body: some View {
         VStack {
             VStack(spacing: 8) {
-                Image(systemName: imageName)
-                    .renderingMode(.original)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 180, height: 180)
-                
-                Text("\(temperature)°").font(.system(size: 70))
-                    .foregroundColor(.white)
-            }.padding(.bottom, 40)
+                DateTimeView(forecastData: weatherData)
+                HStack (spacing: 8) {
+                    VStack(alignment: .center) {
+                        Image(systemName: imageName)
+                            .renderingMode(.original)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 180, height: 180)
+
+                    }
+                    VStack(alignment: .leading, spacing: 8) {
+                       
+                        if let weatherData = weatherData {
+                            Text("\(weatherData.temperatureMax)°C")
+                               .font(.system(size: 80, weight: .bold))
+                               .foregroundColor(.white)
+
+                           Text("Feels like: \(weatherData.apparentTemperature)°C")
+                                .font(.title2)
+                               .foregroundColor(.white.opacity(0.6))
+
+                           Text("Wind: \(Int(weatherData.windSpeed)) km/h")
+                               .font(.title2)
+                               .foregroundColor(.white.opacity(0.6))
+
+                           Text("Rain: \(weatherData.precipitation, specifier: "%.1f") mm")
+                               .font(.title2)
+                               .foregroundColor(.white.opacity(0.6))
+                        } else {
+                            Text("Weather data not found")
+                                .font(.title3)
+                                .foregroundColor(.gray)
+                        }
+                    
+                        
+                    }
+                    
+                }
+            
+            }.padding(.bottom, 10)
         }
     }
 }
 #Preview {
-    MainWeatherViewStatusView(imageName: "sun.max.fill", temperature: 10)
+    MainWeatherViewStatusView(imageName: "sun.max.fill", weatherData: WeatherData(timezone: "test", dayOfWeek: "12/2", temperatureMax: 12, temperatureMin: 23, weatherCode: 2, apparentTemperature: 23, windSpeed: 123, windGust: 23, precipitation: 23, dateString: "WED 7/16"))
 }

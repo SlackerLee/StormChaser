@@ -12,6 +12,9 @@ struct ContentView: View {
     @State private var isNight: Bool = false
     @StateObject private var locationManager = LocationManager()
     @State private var forecastData: [WeatherData] = []
+    
+    // Timer for 10-second auto refresh
+    let timer = Timer.publish(every: 10, on: .main, in: .common).autoconnect()
 
     var body: some View {
         NavigationStack{
@@ -19,14 +22,18 @@ struct ContentView: View {
                 BackgroundView(isNight: isNight)
 
                 VStack(spacing: 10) {
-                    // City name with fallback
-                    CityTextView(cityName: locationManager.cityName?.isEmpty == false ? locationManager.cityName! : "Canada, CA")
+
+                   
 
                     // Main weather status (first day's max temp)
                     MainWeatherViewStatusView(
                         imageName: forecastData.first?.iconName ?? "cloud.fill",
-                        temperature: forecastData.first?.temperatureMax ?? 0
+                        weatherData: forecastData.first
                     )
+                    
+                    // City name with fallback
+                    CityTextView(cityName: locationManager.cityName?.isEmpty == false ? locationManager.cityName! : "Canada, CA", timezone: forecastData.first?.timezone ?? "")
+                    
 
                     // 7-Day forecast
                     ScrollView(.horizontal, showsIndicators: false) {
@@ -34,6 +41,7 @@ struct ContentView: View {
                             ForEach(forecastData, id: \.self) { data in
                                 WeatherDayView(
                                     dayOfWeek: data.dayOfWeek,
+                                    date: data.dateString,
                                     imageName: data.iconName,
                                     temperature: data.temperatureMax
                                 )
@@ -77,6 +85,8 @@ struct ContentView: View {
                 locationManager.checkLocationAuthorization()
             }
             .onChange(of: locationManager.lastKnownLocation) { oldValue, newValue in
+                fetchForecast()
+            }.onReceive(timer) { _ in
                 fetchForecast()
             }
         }

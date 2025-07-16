@@ -15,7 +15,7 @@ class ForecastManager {
     private init() {}
 
     func fetchWeatherForecast(latitude: Double, longitude: Double, completion: @escaping ([WeatherData]?) -> Void) {
-        let urlString = "\(baseUrl)/forecast?latitude=\(latitude)&longitude=\(longitude)&daily=temperature_2m_max,temperature_2m_min,weather_code&timezone=auto"
+        let urlString = "\(baseUrl)/forecast?latitude=\(latitude)&longitude=\(longitude)&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,windspeed_10m_max,windgusts_10m_max,precipitation_sum,weathercode&timezone=auto"
 
         guard let url = URL(string: urlString) else {
             print("Invalid URL")
@@ -24,40 +24,58 @@ class ForecastManager {
         }
 
         URLSession.shared.dataTask(with: url) { data, _, error in
-            if let data = data {
-                do {
-                    let forecast = try JSONDecoder().decode(ForecastResponseData.self, from: data)
-                    var weatherList: [WeatherData] = []
+                if let data = data {
+                    do {
+                        let forecast = try JSONDecoder().decode(ForecastResponseData.self, from: data)
+                        var weatherList: [WeatherData] = []
 
-                    let dateFormatter = DateFormatter()
-                    dateFormatter.dateFormat = "yyyy-MM-dd"
+                        let dateFormatter = DateFormatter()
+                        dateFormatter.dateFormat = "yyyy-MM-dd"
 
-                    let weekdayFormatter = DateFormatter()
-                    weekdayFormatter.dateFormat = "EEE"
+                        let weekdayFormatter = DateFormatter()
+                        weekdayFormatter.dateFormat = "EEE"
 
-                    for i in 0..<forecast.daily.time.count {
-                        if let date = dateFormatter.date(from: forecast.daily.time[i]) {
-                            let day = weekdayFormatter.string(from: date).uppercased()
-                            let maxTemp = Int(forecast.daily.temperature_2m_max[i])
-                            let minTemp = Int(forecast.daily.temperature_2m_min[i])
-                            let code = forecast.daily.weather_code[i]
-                            weatherList.append(WeatherData(dayOfWeek: day, temperatureMax: maxTemp, temperatureMin: minTemp, weatherCode: code))
+                        for i in 0..<forecast.daily.time.count {
+                            if let date = dateFormatter.date(from: forecast.daily.time[i]) {
+                                let day = weekdayFormatter.string(from: date).uppercased()
+                                let maxTemp = Int(forecast.daily.temperature_2m_max[i])
+                                let minTemp = Int(forecast.daily.temperature_2m_min[i])
+                                let realFeel = Int(forecast.daily.apparent_temperature_max[i])
+                                let wind = forecast.daily.windspeed_10m_max[i]
+                                let gust = forecast.daily.windgusts_10m_max[i]
+                                let rain = forecast.daily.precipitation_sum[i]
+                                let code = forecast.daily.weathercode[i]
+
+                                weatherList.append(
+                                    WeatherData(
+                                        timezone: forecast.timezone,
+                                        dayOfWeek: day,
+                                        temperatureMax: maxTemp,
+                                        temperatureMin: minTemp,
+                                        weatherCode: code,
+                                        apparentTemperature: realFeel,
+                                        windSpeed: wind,
+                                        windGust: gust,
+                                        precipitation: rain,
+                                        dateString: forecast.daily.time[i]
+                                    )
+                                )
+                            }
                         }
-                    }
 
-                    DispatchQueue.main.async {
-                        completion(weatherList)
-                    }
+                        DispatchQueue.main.async {
+                            completion(weatherList)
+                        }
 
-                } catch {
-                    print("Decoding error: \(error)")
+                    } catch {
+                        print("Decoding error: \(error)")
+                        DispatchQueue.main.async { completion(nil) }
+                    }
+                } else if let error = error {
+                    print("Network error: \(error)")
                     DispatchQueue.main.async { completion(nil) }
                 }
-            } else if let error = error {
-                print("Network error: \(error)")
-                DispatchQueue.main.async { completion(nil) }
-            }
-        }.resume()
+            }.resume()
     }
     
     func fetchStormDetails(latitude: Double, longitude: Double, completion: @escaping ([StormDetail]?) -> Void) {

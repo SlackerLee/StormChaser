@@ -1,5 +1,5 @@
 //
-//  Untitled.swift
+//  StormDetailView.swift
 //  StormChaser
 //
 //  Created by Tung on 16/7/2025.
@@ -32,13 +32,17 @@ struct StormDetailView: View {
                     VStack(alignment: .leading) {
                         HStack {
                             Image(systemName: "clock.fill")
-                        }
-                        Text("\(formatTime(detail.time))")
+                            Text("\(formatTime(detail.time))")
                             .font(.headline)
-                        Image(systemName: "drop.fill")
-                        Text("Precipitation: \(detail.precipitation, specifier: "%.1f") mm")
-                        Image(systemName: "window.fill")
-                        Text("Wind: \(detail.windSpeed, specifier: "%.0f") km/h")
+                        }
+                        HStack {
+                            Image(systemName: "drop.fill")
+                            Text("Precipitation: \(detail.precipitation, specifier: "%.1f") mm")
+                        }
+                        HStack {
+                            Image(systemName: "wind")
+                            Text("Wind: \(detail.windSpeed, specifier: "%.0f") km/h")
+                        }
                     }
                     .padding(.vertical, 4)
                 }

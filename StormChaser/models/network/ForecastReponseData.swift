@@ -8,4 +8,5 @@
 
 struct ForecastResponseData: Decodable {
     let daily: DailyWeatherData
+    let timezone: String
 }
