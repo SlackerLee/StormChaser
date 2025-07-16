@@ -15,6 +15,8 @@ final class LocationManager: NSObject, CLLocationManagerDelegate, ObservableObje
     var manager = CLLocationManager()
     let geocoder = CLGeocoder()
     
+    private var lastGeocodedLocation: CLLocation?
+    
     
     func checkLocationAuthorization() {
         
@@ -49,10 +51,10 @@ final class LocationManager: NSObject, CLLocationManagerDelegate, ObservableObje
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        lastKnownLocation = locations.first?.coordinate
-        if let location = locations.first {
-            geocode(location: location)
-        }
+        guard let location = locations.first else { return }
+        lastKnownLocation = location.coordinate
+        geocode(location: location)
+        manager.stopUpdatingLocation() // Stop further updates
     }
     
     private func geocode(location: CLLocation) {
@@ -66,3 +68,10 @@ final class LocationManager: NSObject, CLLocationManagerDelegate, ObservableObje
         }
     }
 }
+
+extension CLLocationCoordinate2D: @retroactive Equatable {
+    public static func == (lhs: CLLocationCoordinate2D, rhs: CLLocationCoordinate2D) -> Bool {
+        lhs.latitude == rhs.latitude && lhs.longitude == rhs.longitude
+    }
+}
+

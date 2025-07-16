@@ -23,7 +23,7 @@ struct WeatherDayView: View {
                 .aspectRatio(contentMode: .fit)
                 .frame(width: 40, height: 40)
             
-            Text("\(temperature)°").font(.system(size: 28, weight: .medium)).foregroundColor(.white)
+            Text("\(temperature)°C").font(.system(size: 28, weight: .medium)).foregroundColor(.white)
         }
     }
 }
