@@ -39,7 +39,6 @@ struct StormCameraView: UIViewControllerRepresentable {
             } else if let originalImage = info[.originalImage] as? UIImage {
                 parent.selectedImage = originalImage
             }
-            
             parent.presentationMode.wrappedValue.dismiss()
         }
         

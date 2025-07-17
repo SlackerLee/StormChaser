@@ -12,6 +12,7 @@ struct StormDocumentationListView: View {
     @State private var searchText = ""
     @State private var selectedStormType: StormType?
     @State private var showingFilter = false
+    @EnvironmentObject var appThemeManager: AppThemeManager
     
     var filteredDocumentations: [StormDocumentation] {
         var filtered = documentationManager.stormDocumentations
@@ -31,7 +32,8 @@ struct StormDocumentationListView: View {
     }
     
     var body: some View {
-//        NavigationView {
+        ZStack {
+            BackgroundView(isNight: appThemeManager.isNight)
             VStack {
                 // Search and Filter Bar
                 HStack {
@@ -39,31 +41,33 @@ struct StormDocumentationListView: View {
                         Image(systemName: "magnifyingglass")
                             .foregroundColor(.gray)
                         TextField("Search notes or storm type...", text: $searchText)
+                            .foregroundColor(.gray)
                     }
                     .padding(8)
-                    .background(Color.gray.opacity(0.1))
+                    .background(Color.gray.opacity(0.2))
                     .clipShape(RoundedRectangle(cornerRadius: 8))
                     
                     Button(action: {
                         showingFilter.toggle()
                     }) {
                         Image(systemName: "line.3.horizontal.decrease.circle")
-                            .foregroundColor(selectedStormType != nil ? .blue : .gray)
+                            .foregroundColor(.gray)
                     }
                 }
-                .padding(.horizontal)
+                .padding(EdgeInsets(top: 5, leading: 10, bottom: 5, trailing: 10))
+                .background(Color.white)
                 
                 if filteredDocumentations.isEmpty {
                     VStack(spacing: 20) {
                         Image(systemName: "photo.on.rectangle.angled")
                             .font(.system(size: 60))
-                            .foregroundColor(.gray)
+                            .foregroundColor(.white)
                         Text("No storm documentation found")
                             .font(.headline)
-                            .foregroundColor(.gray)
+                            .foregroundColor(.white)
                         Text("Start documenting storms by taking photos and adding metadata")
                             .font(.caption)
-                            .foregroundColor(.gray)
+                            .foregroundColor(.white)
                             .multilineTextAlignment(.center)
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -76,20 +80,20 @@ struct StormDocumentationListView: View {
                     .listStyle(PlainListStyle())
                 }
             }
-            .navigationTitle("Storm Documentation")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    NavigationLink(destination: StormDocumentationFormView()) {
-                        Image(systemName: "plus")
-                    }
+        }
+        .navigationTitle("Storm Documentation")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                NavigationLink(destination: StormDocumentationFormView()) {
+                    Image(systemName: "plus")
                 }
             }
-            .sheet(isPresented: $showingFilter) {
-                StormTypeFilterView(selectedType: $selectedStormType)
-            }
         }
-//    }
+        .sheet(isPresented: $showingFilter) {
+            StormTypeFilterView(selectedType: $selectedStormType)
+        }
+    }
 }
 
 struct StormDocumentationRowView: View {

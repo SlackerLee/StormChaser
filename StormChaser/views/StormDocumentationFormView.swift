@@ -11,6 +11,7 @@ import CoreLocation
 struct StormDocumentationFormView: View {
     @StateObject private var locationManager = LocationManager()
     @StateObject private var documentationManager = StormDocumentationManager()
+    @EnvironmentObject var appThemeManager: AppThemeManager
     
     @State private var selectedImage: UIImage?
     @State private var showingCamera = false
@@ -29,7 +30,8 @@ struct StormDocumentationFormView: View {
     @State private var weatherDescription: String = ""
     
     var body: some View {
-//        NavigationView {
+        ZStack {
+            BackgroundView(isNight: appThemeManager.isNight)
             ScrollView {
                 VStack(spacing: 20) {
                     // Photo Section
@@ -241,20 +243,21 @@ struct StormDocumentationFormView: View {
                 }
                 .padding()
             }
-            .navigationTitle("Storm Documentation")
-            .navigationBarTitleDisplayMode(.inline)
-            .sheet(isPresented: $showingCamera) {
-                StormCameraView(selectedImage: $selectedImage)
-            }
-            .alert("Documentation", isPresented: $showingAlert) {
-                Button("OK") { }
-            } message: {
-                Text(alertMessage)
-            }
-            .onAppear {
-                locationManager.checkLocationAuthorization()
-            }
-//        }
+        }
+        .navigationTitle("Storm Documentation")
+        .navigationBarTitleDisplayMode(.inline)
+        .sheet(isPresented: $showingCamera) {
+            StormCameraView(selectedImage: $selectedImage)
+        }
+        .alert("Documentation", isPresented: $showingAlert) {
+            Button("OK") { }
+        } message: {
+            Text(alertMessage)
+        }
+        .onAppear {
+            locationManager.checkLocationAuthorization()
+        }
+        
     }
     
     private func saveDocumentation() {

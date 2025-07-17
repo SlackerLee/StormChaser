@@ -13,6 +13,7 @@ struct StormDocumentationDetailView: View {
     @StateObject private var documentationManager = StormDocumentationManager()
     @State private var showingDeleteAlert = false
     @State private var region: MKCoordinateRegion
+    @EnvironmentObject var appThemeManager: AppThemeManager
     
     init(documentation: StormDocumentation) {
         self.documentation = documentation
@@ -23,169 +24,172 @@ struct StormDocumentationDetailView: View {
     }
     
     var body: some View {
-        ScrollView {
-            VStack(spacing: 20) {
-                // Photo Section
-                if let uiImage = UIImage(data: documentation.photoData) {
-                    Image(uiImage: uiImage)
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(maxWidth: .infinity)
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
-                        .shadow(radius: 5)
-                }
-                
-                // Storm Type and Date
-                VStack(spacing: 8) {
-                    HStack {
-                        Image(systemName: documentation.stormType.icon)
-                            .font(.title2)
-                            .foregroundColor(.blue)
-                        Text(documentation.stormType.rawValue)
-                            .font(.title2)
-                            .fontWeight(.semibold)
-                        Spacer()
+        ZStack {
+            BackgroundView(isNight: appThemeManager.isNight)
+            ScrollView {
+                VStack(spacing: 20) {
+                    // Photo Section
+                    if let uiImage = UIImage(data: documentation.photoData) {
+                        Image(uiImage: uiImage)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(maxWidth: .infinity)
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                            .shadow(radius: 5)
                     }
                     
-                    HStack {
-                        Image(systemName: "calendar")
-                            .foregroundColor(.gray)
-                        Text(documentation.dateTime, style: .date)
-                            .foregroundColor(.gray)
-                        Spacer()
-                        Image(systemName: "clock")
-                            .foregroundColor(.gray)
-                        Text(documentation.dateTime, style: .time)
-                            .foregroundColor(.gray)
-                    }
-                }
-                .padding()
-                .background(Color.gray.opacity(0.1))
-                .clipShape(RoundedRectangle(cornerRadius: 12))
-                
-                // Weather Conditions
-                VStack(alignment: .leading, spacing: 12) {
-                    Text("Weather Conditions")
-                        .font(.headline)
-                        .foregroundColor(.primary)
-                    
-                    LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 2), spacing: 12) {
-                        WeatherInfoCard(
-                            icon: "thermometer",
-                            title: "Temperature",
-                            value: documentation.weatherConditions.temperature,
-                            unit: "°C",
-                            color: .orange
-                        )
-                        
-                        WeatherInfoCard(
-                            icon: "humidity",
-                            title: "Humidity",
-                            value: documentation.weatherConditions.humidity,
-                            unit: "%",
-                            color: .blue
-                        )
-                        
-                        WeatherInfoCard(
-                            icon: "wind",
-                            title: "Wind Speed",
-                            value: documentation.weatherConditions.windSpeed,
-                            unit: "km/h",
-                            color: .green
-                        )
-                        
-                        WeatherInfoCard(
-                            icon: "gauge",
-                            title: "Pressure",
-                            value: documentation.weatherConditions.pressure,
-                            unit: "hPa",
-                            color: .purple
-                        )
-                        
-                        WeatherInfoCard(
-                            icon: "eye",
-                            title: "Visibility",
-                            value: documentation.weatherConditions.visibility,
-                            unit: "km",
-                            color: .cyan
-                        )
-                    }
-                    
-                    if let description = documentation.weatherConditions.description, !description.isEmpty {
-                        VStack(alignment: .leading, spacing: 5) {
-                            Text("Description")
-                                .font(.subheadline)
-                                .fontWeight(.medium)
-                            Text(description)
-                                .font(.body)
-                                .foregroundColor(.secondary)
+                    // Storm Type and Date
+                    VStack(spacing: 8) {
+                        HStack {
+                            Image(systemName: documentation.stormType.icon)
+                                .font(.title2)
+                                .foregroundColor(.blue)
+                            Text(documentation.stormType.rawValue)
+                                .font(.title2)
+                                .fontWeight(.semibold)
+                            Spacer()
                         }
-                        .padding()
-                        .background(Color.blue.opacity(0.1))
-                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                        
+                        HStack {
+                            Image(systemName: "calendar")
+                                .foregroundColor(.gray)
+                            Text(documentation.dateTime, style: .date)
+                                .foregroundColor(.gray)
+                            Spacer()
+                            Image(systemName: "clock")
+                                .foregroundColor(.gray)
+                            Text(documentation.dateTime, style: .time)
+                                .foregroundColor(.gray)
+                        }
                     }
-                }
-                
-                // Notes Section
-                if !documentation.notes.isEmpty {
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("Notes & Description")
+                    .padding()
+                    .background(Color.gray.opacity(0.1))
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                    
+                    // Weather Conditions
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("Weather Conditions")
                             .font(.headline)
                             .foregroundColor(.primary)
                         
-                        Text(documentation.notes)
-                            .font(.body)
-                            .foregroundColor(.secondary)
-                            .padding()
-                            .background(Color.gray.opacity(0.1))
-                            .clipShape(RoundedRectangle(cornerRadius: 8))
-                    }
-                }
-                
-                // Location Map
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("Location")
-                        .font(.headline)
-                        .foregroundColor(.primary)
-                    
-                    Map(coordinateRegion: $region, annotationItems: [documentation]) { doc in
-                        MapMarker(coordinate: doc.location, tint: .red)
-                    }
-                    .frame(height: 200)
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
-                    
-                    HStack {
-                        Image(systemName: "location")
-                            .foregroundColor(.red)
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text("Latitude: \(documentation.location.latitude, specifier: "%.6f")")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                            Text("Longitude: \(documentation.location.longitude, specifier: "%.6f")")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
+                        LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 2), spacing: 12) {
+                            WeatherInfoCard(
+                                icon: "thermometer",
+                                title: "Temperature",
+                                value: documentation.weatherConditions.temperature,
+                                unit: "°C",
+                                color: .orange
+                            )
+                            
+                            WeatherInfoCard(
+                                icon: "humidity",
+                                title: "Humidity",
+                                value: documentation.weatherConditions.humidity,
+                                unit: "%",
+                                color: .blue
+                            )
+                            
+                            WeatherInfoCard(
+                                icon: "wind",
+                                title: "Wind Speed",
+                                value: documentation.weatherConditions.windSpeed,
+                                unit: "km/h",
+                                color: .green
+                            )
+                            
+                            WeatherInfoCard(
+                                icon: "gauge",
+                                title: "Pressure",
+                                value: documentation.weatherConditions.pressure,
+                                unit: "hPa",
+                                color: .purple
+                            )
+                            
+                            WeatherInfoCard(
+                                icon: "eye",
+                                title: "Visibility",
+                                value: documentation.weatherConditions.visibility,
+                                unit: "km",
+                                color: .cyan
+                            )
                         }
-                        Spacer()
+                        
+                        if let description = documentation.weatherConditions.description, !description.isEmpty {
+                            VStack(alignment: .leading, spacing: 5) {
+                                Text("Description")
+                                    .font(.subheadline)
+                                    .fontWeight(.medium)
+                                Text(description)
+                                    .font(.body)
+                                    .foregroundColor(.secondary)
+                            }
+                            .padding()
+                            .background(Color.blue.opacity(0.1))
+                            .clipShape(RoundedRectangle(cornerRadius: 8))
+                        }
                     }
-                    .padding(.horizontal)
-                }
-                
-                // Delete Button
-                Button(action: {
-                    showingDeleteAlert = true
-                }) {
-                    HStack {
-                        Image(systemName: "trash")
-                        Text("Delete Documentation")
+                    
+                    // Notes Section
+                    if !documentation.notes.isEmpty {
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Notes & Description")
+                                .font(.headline)
+                                .foregroundColor(.primary)
+                            
+                            Text(documentation.notes)
+                                .font(.body)
+                                .foregroundColor(.secondary)
+                                .padding()
+                                .background(Color.gray.opacity(0.1))
+                                .clipShape(RoundedRectangle(cornerRadius: 8))
+                        }
                     }
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(Color.red)
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                    
+                    // Location Map
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Location")
+                            .font(.headline)
+                            .foregroundColor(.primary)
+                        
+                        Map(coordinateRegion: $region, annotationItems: [documentation]) { doc in
+                            MapMarker(coordinate: doc.location, tint: .red)
+                        }
+                        .frame(height: 200)
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                        
+                        HStack {
+                            Image(systemName: "location")
+                                .foregroundColor(.red)
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("Latitude: \(documentation.location.latitude, specifier: "%.6f")")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                                Text("Longitude: \(documentation.location.longitude, specifier: "%.6f")")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                            Spacer()
+                        }
+                        .padding(.horizontal)
+                    }
+                    
+                    // Delete Button
+                    Button(action: {
+                        showingDeleteAlert = true
+                    }) {
+                        HStack {
+                            Image(systemName: "trash")
+                            Text("Delete Documentation")
+                        }
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.red)
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                    }
                 }
+                .padding()
             }
-            .padding()
         }
         .navigationTitle("Storm Details")
         .navigationBarTitleDisplayMode(.inline)

@@ -12,6 +12,7 @@ struct ContentView: View {
     @State private var isNight: Bool = false
     @StateObject private var locationManager = LocationManager()
     @State private var forecastData: [WeatherData] = []
+    @EnvironmentObject var appThemeManager: AppThemeManager
     
     // Timer for 10-second auto refresh
     let timer = Timer.publish(every: 10, on: .main, in: .common).autoconnect()
@@ -19,7 +20,7 @@ struct ContentView: View {
     var body: some View {
         NavigationStack{
             ZStack {
-                BackgroundView(isNight: isNight)
+                BackgroundView(isNight: appThemeManager.isNight)
 
                 VStack(spacing: 10) {
 
@@ -52,7 +53,7 @@ struct ContentView: View {
                     Spacer()
 
                     Button {
-                        isNight.toggle()
+                        appThemeManager.isNight.toggle()
                     } label: {
                         WeatherButton(title: "Change Day time", textColor: .white, backgroundColor: .gray)
                     }
@@ -70,7 +71,7 @@ struct ContentView: View {
                             }
                         }) {
                             HStack {
-                                Image(systemName: "radar")
+                                Image(systemName: "tropicalstorm")
                                 Text("View Storm Tracker")
                             }
                             .frame(maxWidth: .infinity)
