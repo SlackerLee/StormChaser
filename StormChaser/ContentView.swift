@@ -58,27 +58,41 @@ struct ContentView: View {
                     }
 
                     Spacer()
-                    NavigationLink(destination: {
-                        if let lat = locationManager.lastKnownLocation?.latitude,
-                           let lon = locationManager.lastKnownLocation?.longitude {
-                            StormDetailView(latitude: lat, longitude: lon)
-                        } else {
-                            NotFoundView()
+                    
+                    // Navigation Buttons
+                    VStack(spacing: 12) {
+                        NavigationLink(destination: {
+                            if let lat = locationManager.lastKnownLocation?.latitude,
+                               let lon = locationManager.lastKnownLocation?.longitude {
+                                StormDetailView(latitude: lat, longitude: lon)
+                            } else {
+                                NotFoundView()
+                            }
+                        }) {
+                            HStack {
+                                Image(systemName: "radar")
+                                Text("View Storm Tracker")
+                            }
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color.blue)
+                            .foregroundColor(.white)
+                            .clipShape(Capsule())
                         }
-                    }) {
                         
-                        HStack {
-                            Image(systemName: "tropicalstorm")
-                            Text("View Storm Tracker")
-                                .bold()
+                        NavigationLink(destination: StormDocumentationListView()) {
+                            HStack {
+                                Image(systemName: "photo.on.rectangle.angled")
+                                Text("Storm Documentation")
+                            }
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color.green)
+                            .foregroundColor(.white)
+                            .clipShape(Capsule())
                         }
-                        .padding()
-                        .foregroundColor(.white)
-                        .background(Color.blue)
-                        .clipShape(Capsule())
-
                     }
-                    .padding()
+                    .padding(.horizontal)
                 }
             }
             .onAppear {

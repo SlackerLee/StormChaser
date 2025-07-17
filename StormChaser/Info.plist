@@ -3,6 +3,8 @@
 <plist version="1.0">
 <dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>We need your location to show the weather in your city.</string>
+	<string>We need your location to show the weather in your city and document storm locations.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>We need camera access to capture photos of storms for documentation.</string>
 </dict>
 </plist>

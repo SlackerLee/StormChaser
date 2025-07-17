@@ -13,21 +13,26 @@ struct CityTextView: View {
     var timezone: String
     
     var body: some View {
-        VStack(alignment: .center) {
-            HStack {
-                Image(systemName: "mappin.and.ellipse").font(.system(size: 40)).foregroundColor(.white)
-                Text("\(cityName), \(timezone)")
+        HStack(alignment: .center) {
+            Image(systemName: "mappin.and.ellipse").font(.system(size: 40)).foregroundColor(.white)
+            VStack(alignment: .leading)  {
+                Text("\(cityName)")
+                    .font(.system(size: 24, weight: .medium, design: .default))
+                    .foregroundColor(.white)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.5)
+                Text("Time Zone: \(timezone)")
                     .font(.system(size: 24, weight: .medium, design: .default))
                     .foregroundColor(.white)
                     .lineLimit(1)
                     .minimumScaleFactor(0.5)
             }
-        }
-        .padding()
+        }.padding()
         .background(
             RoundedRectangle(cornerRadius: 16)
                     .fill(Color.black.opacity(0.1))
-        ).padding()
+        )
+        .padding(EdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10))
     }
 }
 

@@ -5,7 +5,7 @@
 //  Created by Tung on 16/7/2025.
 //
 
-struct StormDetail: Hashable {
+struct StormDetailData: Hashable {
     let time: String
     let windSpeed: Double
     let precipitation: Double

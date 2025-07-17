@@ -16,7 +16,7 @@ struct MainWeatherViewStatusView: View {
         VStack {
             VStack(spacing: 8) {
                 DateTimeView(forecastData: weatherData)
-                HStack (spacing: 8) {
+                HStack (spacing: 10) {
                     VStack(alignment: .center) {
                         Image(systemName: imageName)
                             .renderingMode(.original)
@@ -25,11 +25,11 @@ struct MainWeatherViewStatusView: View {
                             .frame(width: 180, height: 180)
 
                     }
-                    VStack(alignment: .leading, spacing: 8) {
+                    VStack(alignment: .leading, spacing: 5) {
                        
                         if let weatherData = weatherData {
                             Text("\(weatherData.temperatureMax)°C")
-                               .font(.system(size: 80, weight: .bold))
+                               .font(.system(size: 75, weight: .bold))
                                .foregroundColor(.white)
 
                            Text("Feels like: \(weatherData.apparentTemperature)°C")
@@ -48,13 +48,18 @@ struct MainWeatherViewStatusView: View {
                                 .font(.title3)
                                 .foregroundColor(.gray)
                         }
-                    
                         
                     }
                     
                 }
             
-            }.padding(.bottom, 10)
+            }
+            .padding(EdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10))
+//            .background(
+//                RoundedRectangle(cornerRadius: 16)
+//                        .fill(Color.black.opacity(0.1))
+//            )
+
         }
     }
 }

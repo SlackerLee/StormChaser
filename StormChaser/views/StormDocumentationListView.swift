@@ -31,7 +31,7 @@ struct StormDocumentationListView: View {
     }
     
     var body: some View {
-        NavigationView {
+//        NavigationView {
             VStack {
                 // Search and Filter Bar
                 HStack {
@@ -89,7 +89,7 @@ struct StormDocumentationListView: View {
                 StormTypeFilterView(selectedType: $selectedStormType)
             }
         }
-    }
+//    }
 }
 
 struct StormDocumentationRowView: View {

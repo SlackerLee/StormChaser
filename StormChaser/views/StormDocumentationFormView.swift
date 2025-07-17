@@ -29,7 +29,7 @@ struct StormDocumentationFormView: View {
     @State private var weatherDescription: String = ""
     
     var body: some View {
-        NavigationView {
+//        NavigationView {
             ScrollView {
                 VStack(spacing: 20) {
                     // Photo Section
@@ -254,7 +254,7 @@ struct StormDocumentationFormView: View {
             .onAppear {
                 locationManager.checkLocationAuthorization()
             }
-        }
+//        }
     }
     
     private func saveDocumentation() {

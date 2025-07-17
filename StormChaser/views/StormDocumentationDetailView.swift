@@ -233,6 +233,3 @@ struct WeatherInfoCard: View {
         .clipShape(RoundedRectangle(cornerRadius: 8))
     }
 }
-
-// Extension to make StormDocumentation conform to Identifiable for Map
-extension StormDocumentation: Identifiable { } 

@@ -19,7 +19,6 @@ class StormDocumentationManager: ObservableObject {
         loadStormDocumentations()
     }
     
-    // MARK: - Save Storm Documentation
     func saveStormDocumentation(
         photo: UIImage,
         location: CLLocationCoordinate2D,
@@ -45,13 +44,11 @@ class StormDocumentationManager: ObservableObject {
         saveToFile()
     }
     
-    // MARK: - Delete Storm Documentation
     func deleteStormDocumentation(_ documentation: StormDocumentation) {
         stormDocumentations.removeAll { $0.id == documentation.id }
         saveToFile()
     }
-    
-    // MARK: - Get Storm Documentation by Location
+
     func getStormDocumentations(near location: CLLocationCoordinate2D, radius: Double = 10.0) -> [StormDocumentation] {
         return stormDocumentations.filter { documentation in
             let distance = calculateDistance(from: location, to: documentation.location)

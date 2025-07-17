@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct StormDetailView: View {
-    @State private var stormData: [StormDetail] = []
+    @State private var stormData: [StormDetailData] = []
     @State private var isLoading: Bool = true
     @State private var hasError: Bool = false
 
@@ -17,11 +17,6 @@ struct StormDetailView: View {
 
     var body: some View {
         VStack {
-            Text("Storm Tracker")
-                .font(.largeTitle)
-                .bold()
-                .padding(.top)
-
             if isLoading {
                 ProgressView("Loading weather data...")
                     .padding()
@@ -51,6 +46,8 @@ struct StormDetailView: View {
         .onAppear {
             fetchStormDetails()
         }
+        .navigationTitle("Storm Tracker")
+        .navigationBarTitleDisplayMode(.inline)
     }
 
     func fetchStormDetails() {

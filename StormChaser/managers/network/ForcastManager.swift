@@ -78,7 +78,7 @@ class ForecastManager {
             }.resume()
     }
     
-    func fetchStormDetails(latitude: Double, longitude: Double, completion: @escaping ([StormDetail]?) -> Void) {
+    func fetchStormDetails(latitude: Double, longitude: Double, completion: @escaping ([StormDetailData]?) -> Void) {
         let urlString = "\(baseUrl)/forecast?latitude=\(latitude)&longitude=\(longitude)&hourly=windspeed_10m,precipitation&timezone=auto"
 
         guard let url = URL(string: urlString) else {
@@ -91,14 +91,14 @@ class ForecastManager {
             if let data = data {
                 do {
                     let decoded = try JSONDecoder().decode(StormDetailResponse.self, from: data)
-                    var details: [StormDetail] = []
+                    var details: [StormDetailData] = []
 
                     for i in 0..<decoded.hourly.time.count {
                         let time = decoded.hourly.time[i]
                         let wind = decoded.hourly.windspeed_10m[i]
                         let rain = decoded.hourly.precipitation[i]
 
-                        details.append(StormDetail(time: time, windSpeed: wind, precipitation: rain))
+                        details.append(StormDetailData(time: time, windSpeed: wind, precipitation: rain))
                     }
 
                     DispatchQueue.main.async {
