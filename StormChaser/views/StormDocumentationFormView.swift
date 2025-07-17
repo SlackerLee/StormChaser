@@ -122,10 +122,10 @@ struct StormDocumentationFormView: View {
                                 TextField("25.0", text: $temperature)
                                     .keyboardType(.decimalPad)
                                     .padding(8)
-                                    .background(Color.white)
+                                    .background(Color.white.opacity(0.8))
                                     .cornerRadius(8)
                                     .frame(width: 100)
-                                    .foregroundColor(.white)
+                                    .foregroundColor(.black)
                             }
                             
                             HStack {
@@ -135,10 +135,10 @@ struct StormDocumentationFormView: View {
                                 TextField("60", text: $humidity)
                                     .keyboardType(.decimalPad)
                                     .padding(8)
-                                    .background(Color.white)
+                                    .background(Color.white.opacity(0.8))
                                     .cornerRadius(8)
                                     .frame(width: 100)
-                                    .foregroundColor(.white)
+                                    .foregroundColor(.black)
                             }
                             
                             HStack {
@@ -151,7 +151,7 @@ struct StormDocumentationFormView: View {
                                     .background(Color.white.opacity(0.8))
                                     .cornerRadius(8)
                                     .frame(width: 100)
-                                    .foregroundColor(.white)
+                                    .foregroundColor(.black)
                             }
                             
                             HStack {
@@ -164,7 +164,7 @@ struct StormDocumentationFormView: View {
                                     .background(Color.white.opacity(0.8))
                                     .cornerRadius(8)
                                     .frame(width: 100)
-                                    .foregroundColor(.white)
+                                    .foregroundColor(.black)
                             }
                             
                             HStack {
@@ -177,7 +177,7 @@ struct StormDocumentationFormView: View {
                                     .background(Color.white.opacity(0.8))
                                     .cornerRadius(8)
                                     .frame(width: 100)
-                                    .foregroundColor(.white)
+                                    .foregroundColor(.black)
                             }
                             
                             VStack(alignment: .leading, spacing: 5) {
@@ -187,7 +187,7 @@ struct StormDocumentationFormView: View {
                                     .padding(8)
                                     .background(Color.white.opacity(0.8))
                                     .cornerRadius(8)
-                                    .foregroundColor(.white)
+                                    .foregroundColor(.black)
                             }
 
                             VStack(alignment: .leading, spacing: 5) {
@@ -197,7 +197,7 @@ struct StormDocumentationFormView: View {
                                     .padding(8)
                                     .background(Color.white.opacity(0.8))
                                     .cornerRadius(8)
-                                    .foregroundColor(.white)
+                                    .foregroundColor(.black)
                             }
                         }
                     }
@@ -206,7 +206,7 @@ struct StormDocumentationFormView: View {
                     VStack(alignment: .leading, spacing: 10) {
                         Text("Location")
                             .font(.headline)
-                            .foregroundColor(.primary)
+                            .foregroundColor(.white)
                         
                         if let location = locationManager.lastKnownLocation {
                             VStack(alignment: .leading, spacing: 5) {
@@ -222,7 +222,7 @@ struct StormDocumentationFormView: View {
                                         .foregroundColor(.white)
                                 }
                             }
-                            .frame(maxWidth: .infinity)
+                            .frame(maxWidth: .infinity, alignment: .leading)
                             .padding()
                             .background(Color.green.opacity(0.7))
                             .clipShape(RoundedRectangle(cornerRadius: 8))
@@ -256,11 +256,12 @@ struct StormDocumentationFormView: View {
                         }
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(selectedImage != nil ? Color.blue : Color.gray)
+                        .background(Color.blue)
+//                        .background(selectedImage != nil ? Color.blue : Color.gray)
                         .foregroundColor(.white)
                         .clipShape(RoundedRectangle(cornerRadius: 12))
                     }
-                    .disabled(selectedImage == nil || isSaving)
+//                    .disabled(selectedImage == nil || isSaving)
                 }
                 .padding()
             }
@@ -282,10 +283,16 @@ struct StormDocumentationFormView: View {
     }
     
     private func saveDocumentation() {
-        guard let image = selectedImage else {
-            alertMessage = "Please take a photo first"
-            showingAlert = true
-            return
+//        guard let image = selectedImage else {
+//            alertMessage = "Please take a photo first"
+//            showingAlert = true
+//            return
+//        }
+        
+        let renderer = UIGraphicsImageRenderer(size: CGSize(width: 100, height: 100))
+        let dummyImage = renderer.image { context in
+            UIColor.lightGray.setFill()
+            context.fill(CGRect(x: 0, y: 0, width: 100, height: 100))
         }
         
         guard let location = locationManager.lastKnownLocation else {
@@ -307,12 +314,20 @@ struct StormDocumentationFormView: View {
         )
         
         documentationManager.saveStormDocumentation(
-            photo: image,
+            photo: dummyImage,
             location: location,
             notes: notes,
             stormType: selectedStormType,
             weatherConditions: weatherConditions
         )
+        
+//        documentationManager.saveStormDocumentation(
+//            photo: image,
+//            location: location,
+//            notes: notes,
+//            stormType: selectedStormType,
+//            weatherConditions: weatherConditions
+//        )
         
         isSaving = false
         alertMessage = "Storm documentation saved successfully!"
