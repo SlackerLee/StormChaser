@@ -21,20 +21,16 @@ struct ContentView: View {
         NavigationStack{
             ZStack {
                 BackgroundView(isNight: appThemeManager.isNight)
-
                 VStack(spacing: 10) {
-
                    
-
                     // Main weather status (first day's max temp)
                     MainWeatherViewStatusView(
                         imageName: forecastData.first?.iconName ?? "cloud.fill",
                         weatherData: forecastData.first
                     )
-                    
                     // City name with fallback
                     CityTextView(cityName: locationManager.cityName?.isEmpty == false ? locationManager.cityName! : "Canada, CA", timezone: forecastData.first?.timezone ?? "")
-                    
+                   
 
                     // 7-Day forecast
                     ScrollView(.horizontal, showsIndicators: false) {
@@ -50,47 +46,54 @@ struct ContentView: View {
                         }
                         .padding(.horizontal)
                     }
-                    Spacer()
-
-                    Button {
-                        appThemeManager.isNight.toggle()
-                    } label: {
-                        WeatherButton(title: "Change Day time", textColor: .white, backgroundColor: .gray)
-                    }
-
-                    Spacer()
                     
                     // Navigation Buttons
-                    VStack(spacing: 12) {
-                        NavigationLink(destination: {
-                            if let lat = locationManager.lastKnownLocation?.latitude,
-                               let lon = locationManager.lastKnownLocation?.longitude {
-                                StormDetailView(latitude: lat, longitude: lon)
-                            } else {
-                                NotFoundView()
+                    HStack(spacing: 12) {
+                        Button {
+                            appThemeManager.isNight.toggle()
+                        } label: {
+                            DarkModeButton(title: "Dark mode", textColor: .white, backgroundColor: .gray)
+                        }.background(
+                            RoundedRectangle(cornerRadius: 16)
+                                .fill(Color.black.opacity(0.1))
+                        )
+                        VStack(spacing: 12) {
+                            NavigationLink(destination: {
+                                if let lat = locationManager.lastKnownLocation?.latitude,
+                                   let lon = locationManager.lastKnownLocation?.longitude {
+                                    StormDetailView(latitude: lat, longitude: lon)
+                                } else {
+                                    NotFoundView()
+                                }
+                            }) {
+                                HStack {
+                                    Image(systemName: "tropicalstorm")
+                                    Text("View Storm Tracker")
+                                }
+                                .frame(maxWidth: .infinity)
+                                .padding()
+                                .background(
+                                    RoundedRectangle(cornerRadius: 16)
+                                        .fill(Color.black.opacity(0.1))
+                                )
+                                .foregroundColor(.white)
+                                .clipShape(Capsule())
                             }
-                        }) {
-                            HStack {
-                                Image(systemName: "tropicalstorm")
-                                Text("View Storm Tracker")
+                            
+                            NavigationLink(destination: StormDocumentationListView()) {
+                                HStack {
+                                    Image(systemName: "photo.on.rectangle.angled")
+                                    Text("Storm Documentation")
+                                }
+                                .frame(maxWidth: .infinity)
+                                .padding()
+                                .background(
+                                    RoundedRectangle(cornerRadius: 16)
+                                        .fill(Color.black.opacity(0.1))
+                                )
+                                .foregroundColor(.white)
+                                .clipShape(Capsule())
                             }
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(Color.blue)
-                            .foregroundColor(.white)
-                            .clipShape(Capsule())
-                        }
-                        
-                        NavigationLink(destination: StormDocumentationListView()) {
-                            HStack {
-                                Image(systemName: "photo.on.rectangle.angled")
-                                Text("Storm Documentation")
-                            }
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(Color.green)
-                            .foregroundColor(.white)
-                            .clipShape(Capsule())
                         }
                     }
                     .padding(.horizontal)

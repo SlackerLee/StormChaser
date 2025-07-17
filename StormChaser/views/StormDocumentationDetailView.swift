@@ -10,13 +10,15 @@ import MapKit
 
 struct StormDocumentationDetailView: View {
     let documentation: StormDocumentation
-    @StateObject private var documentationManager = StormDocumentationManager()
+    @ObservedObject var documentationManager: StormDocumentationManager
     @State private var showingDeleteAlert = false
     @State private var region: MKCoordinateRegion
     @EnvironmentObject var appThemeManager: AppThemeManager
+    @Environment(\.presentationMode) var presentationMode
     
-    init(documentation: StormDocumentation) {
+    init(documentation: StormDocumentation, documentationManager: StormDocumentationManager) {
         self.documentation = documentation
+        self.documentationManager = documentationManager
         self._region = State(initialValue: MKCoordinateRegion(
             center: documentation.location,
             span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
@@ -43,23 +45,24 @@ struct StormDocumentationDetailView: View {
                         HStack {
                             Image(systemName: documentation.stormType.icon)
                                 .font(.title2)
-                                .foregroundColor(.blue)
+                                .foregroundColor(.white)
                             Text(documentation.stormType.rawValue)
                                 .font(.title2)
                                 .fontWeight(.semibold)
+                                .foregroundColor(.white)
                             Spacer()
                         }
                         
                         HStack {
                             Image(systemName: "calendar")
-                                .foregroundColor(.gray)
+                                .foregroundColor(.white)
                             Text(documentation.dateTime, style: .date)
-                                .foregroundColor(.gray)
+                                .foregroundColor(.white)
                             Spacer()
                             Image(systemName: "clock")
-                                .foregroundColor(.gray)
+                                .foregroundColor(.white)
                             Text(documentation.dateTime, style: .time)
-                                .foregroundColor(.gray)
+                                .foregroundColor(.white)
                         }
                     }
                     .padding()
@@ -70,7 +73,7 @@ struct StormDocumentationDetailView: View {
                     VStack(alignment: .leading, spacing: 12) {
                         Text("Weather Conditions")
                             .font(.headline)
-                            .foregroundColor(.primary)
+                            .foregroundColor(.white)
                         
                         LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 2), spacing: 12) {
                             WeatherInfoCard(
@@ -197,6 +200,7 @@ struct StormDocumentationDetailView: View {
             Button("Cancel", role: .cancel) { }
             Button("Delete", role: .destructive) {
                 documentationManager.deleteStormDocumentation(documentation)
+                presentationMode.wrappedValue.dismiss()
             }
         } message: {
             Text("Are you sure you want to delete this storm documentation? This action cannot be undone.")
@@ -215,21 +219,21 @@ struct WeatherInfoCard: View {
         VStack(spacing: 8) {
             Image(systemName: icon)
                 .font(.title2)
-                .foregroundColor(color)
+                .foregroundColor(.white)
             
             Text(title)
                 .font(.caption)
-                .foregroundColor(.secondary)
+                .foregroundColor(.white)
             
             if let value = value {
                 Text("\(value, specifier: "%.1f") \(unit)")
                     .font(.headline)
                     .fontWeight(.semibold)
-                    .foregroundColor(.primary)
+                    .foregroundColor(.white)
             } else {
                 Text("N/A")
                     .font(.headline)
-                    .foregroundColor(.gray)
+                    .foregroundColor(.white)
             }
         }
         .padding()

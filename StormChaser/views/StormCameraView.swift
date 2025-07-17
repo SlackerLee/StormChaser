@@ -20,7 +20,9 @@ struct StormCameraView: UIViewControllerRepresentable {
         return picker
     }
     
-    func updateUIViewController(_ uiViewController: UIImagePickerController, context: Context) {}
+    func updateUIViewController(_ uiViewController: UIImagePickerController, context: Context) {
+        print("updateUIViewController")
+    }
     
     func makeCoordinator() -> Coordinator {
         Coordinator(self)

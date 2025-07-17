@@ -73,7 +73,7 @@ struct StormDocumentationListView: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else {
                     List(filteredDocumentations) { documentation in
-                        NavigationLink(destination: StormDocumentationDetailView(documentation: documentation)) {
+                        NavigationLink(destination: StormDocumentationDetailView(documentation: documentation, documentationManager: documentationManager)) {
                             StormDocumentationRowView(documentation: documentation)
                         }
                     }
@@ -85,7 +85,7 @@ struct StormDocumentationListView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                NavigationLink(destination: StormDocumentationFormView()) {
+                NavigationLink(destination: StormDocumentationFormView(documentationManager: documentationManager)) {
                     Image(systemName: "plus")
                 }
             }

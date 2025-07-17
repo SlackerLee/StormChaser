@@ -10,7 +10,7 @@ import CoreLocation
 
 struct StormDocumentationFormView: View {
     @StateObject private var locationManager = LocationManager()
-    @StateObject private var documentationManager = StormDocumentationManager()
+    @ObservedObject var documentationManager: StormDocumentationManager
     @EnvironmentObject var appThemeManager: AppThemeManager
     
     @State private var selectedImage: UIImage?
@@ -38,7 +38,7 @@ struct StormDocumentationFormView: View {
                     VStack(alignment: .leading, spacing: 10) {
                         Text("Storm Photo")
                             .font(.headline)
-                            .foregroundColor(.primary)
+                            .foregroundColor(.white)
                         
                         if let image = selectedImage {
                             Image(uiImage: image)
@@ -64,18 +64,18 @@ struct StormDocumentationFormView: View {
                                 VStack(spacing: 12) {
                                     Image(systemName: "camera.fill")
                                         .font(.system(size: 40))
-                                        .foregroundColor(.blue)
+                                        .foregroundColor(.white)
                                     Text("Take Photo")
                                         .font(.headline)
-                                        .foregroundColor(.blue)
+                                        .foregroundColor(.white)
                                 }
                                 .frame(maxWidth: .infinity)
                                 .frame(height: 200)
-                                .background(Color.gray.opacity(0.1))
+                                .background(Color.gray.opacity(0.2))
                                 .clipShape(RoundedRectangle(cornerRadius: 12))
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 12)
-                                        .stroke(Color.blue, style: StrokeStyle(lineWidth: 2, dash: [5]))
+                                        .stroke(Color.white, style: StrokeStyle(lineWidth: 2, dash: [5]))
                                 )
                             }
                         }
@@ -85,7 +85,7 @@ struct StormDocumentationFormView: View {
                     VStack(alignment: .leading, spacing: 10) {
                         Text("Storm Type")
                             .font(.headline)
-                            .foregroundColor(.primary)
+                            .foregroundColor(.white)
                         
                         LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 2), spacing: 10) {
                             ForEach(StormType.allCases, id: \.self) { stormType in
@@ -94,10 +94,10 @@ struct StormDocumentationFormView: View {
                                 }) {
                                     HStack {
                                         Image(systemName: stormType.icon)
-                                            .foregroundColor(selectedStormType == stormType ? .white : .blue)
+                                            .foregroundColor(.white)
                                         Text(stormType.rawValue)
                                             .font(.caption)
-                                            .foregroundColor(selectedStormType == stormType ? .white : .primary)
+                                            .foregroundColor(.white)
                                     }
                                     .padding(.vertical, 8)
                                     .padding(.horizontal, 12)
@@ -112,77 +112,94 @@ struct StormDocumentationFormView: View {
                     VStack(alignment: .leading, spacing: 10) {
                         Text("Weather Conditions")
                             .font(.headline)
-                            .foregroundColor(.primary)
+                            .foregroundColor(.white)
                         
                         VStack(spacing: 12) {
                             HStack {
                                 Text("Temperature (°C)")
+                                .foregroundColor(.white)
                                 Spacer()
                                 TextField("25.0", text: $temperature)
                                     .keyboardType(.decimalPad)
-                                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                                    .padding(8)
+                                    .background(Color.white)
+                                    .cornerRadius(8)
                                     .frame(width: 100)
+                                    .foregroundColor(.white)
                             }
                             
                             HStack {
                                 Text("Humidity (%)")
+                                .foregroundColor(.white)
                                 Spacer()
                                 TextField("60", text: $humidity)
                                     .keyboardType(.decimalPad)
-                                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                                    .padding(8)
+                                    .background(Color.white)
+                                    .cornerRadius(8)
                                     .frame(width: 100)
+                                    .foregroundColor(.white)
                             }
                             
                             HStack {
                                 Text("Wind Speed (km/h)")
+                                .foregroundColor(.white)
                                 Spacer()
                                 TextField("15.0", text: $windSpeed)
                                     .keyboardType(.decimalPad)
-                                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                                    .padding(8)
+                                    .background(Color.white.opacity(0.8))
+                                    .cornerRadius(8)
                                     .frame(width: 100)
+                                    .foregroundColor(.white)
                             }
                             
                             HStack {
                                 Text("Pressure (hPa)")
+                                .foregroundColor(.white)
                                 Spacer()
                                 TextField("1013", text: $pressure)
                                     .keyboardType(.decimalPad)
-                                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                                    .padding(8)
+                                    .background(Color.white.opacity(0.8))
+                                    .cornerRadius(8)
                                     .frame(width: 100)
+                                    .foregroundColor(.white)
                             }
                             
                             HStack {
                                 Text("Visibility (km)")
+                                .foregroundColor(.white)
                                 Spacer()
                                 TextField("10.0", text: $visibility)
                                     .keyboardType(.decimalPad)
-                                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                                    .padding(8)
+                                    .background(Color.white.opacity(0.8))
+                                    .cornerRadius(8)
                                     .frame(width: 100)
+                                    .foregroundColor(.white)
                             }
                             
                             VStack(alignment: .leading, spacing: 5) {
                                 Text("Weather Description")
+                                    .foregroundColor(.white)
                                 TextField("Partly cloudy with strong winds", text: $weatherDescription)
-                                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                                    .padding(8)
+                                    .background(Color.white.opacity(0.8))
+                                    .cornerRadius(8)
+                                    .foregroundColor(.white)
+                            }
+
+                            VStack(alignment: .leading, spacing: 5) {
+                                Text("Notes & Description")
+                                    .foregroundColor(.white)
+                                TextField("", text: $notes)
+                                    .padding(8)
+                                    .background(Color.white.opacity(0.8))
+                                    .cornerRadius(8)
+                                    .foregroundColor(.white)
                             }
                         }
-                    }
-                    
-                    // Notes Section
-                    VStack(alignment: .leading, spacing: 10) {
-                        Text("Notes & Description")
-                            .font(.headline)
-                            .foregroundColor(.primary)
-                        
-                        TextEditor(text: $notes)
-                            .frame(minHeight: 100)
-                            .padding(8)
-                            .background(Color.gray.opacity(0.1))
-                            .clipShape(RoundedRectangle(cornerRadius: 8))
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .stroke(Color.gray.opacity(0.3), lineWidth: 1)
-                            )
                     }
                     
                     // Location Info
@@ -195,19 +212,21 @@ struct StormDocumentationFormView: View {
                             VStack(alignment: .leading, spacing: 5) {
                                 Text("Latitude: \(location.latitude, specifier: "%.6f")")
                                     .font(.caption)
-                                    .foregroundColor(.secondary)
+                                    .foregroundColor(.white)
                                 Text("Longitude: \(location.longitude, specifier: "%.6f")")
                                     .font(.caption)
-                                    .foregroundColor(.secondary)
+                                    .foregroundColor(.white)
                                 if let cityName = locationManager.cityName {
                                     Text("City: \(cityName)")
                                         .font(.caption)
-                                        .foregroundColor(.secondary)
+                                        .foregroundColor(.white)
                                 }
                             }
+                            .frame(maxWidth: .infinity)
                             .padding()
-                            .background(Color.green.opacity(0.1))
+                            .background(Color.green.opacity(0.7))
                             .clipShape(RoundedRectangle(cornerRadius: 8))
+                            
                         } else {
                             HStack {
                                 Image(systemName: "location.slash")
@@ -215,11 +234,13 @@ struct StormDocumentationFormView: View {
                                 Text("Location not available")
                                     .foregroundColor(.red)
                             }
+                            .frame(maxWidth: .infinity)
                             .padding()
                             .background(Color.red.opacity(0.1))
                             .clipShape(RoundedRectangle(cornerRadius: 8))
+                            
                         }
-                    }
+                    }.frame(maxWidth: .infinity)
                     
                     // Save Button
                     Button(action: saveDocumentation) {
