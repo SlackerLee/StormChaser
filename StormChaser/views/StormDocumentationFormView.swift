@@ -283,11 +283,11 @@ struct StormDocumentationFormView: View {
     }
     
     private func saveDocumentation() {
-//        guard let image = selectedImage else {
-//            alertMessage = "Please take a photo first"
-//            showingAlert = true
-//            return
-//        }
+        guard let image = selectedImage else {
+            alertMessage = "Please take a photo first"
+            showingAlert = true
+            return
+        }
         
         let renderer = UIGraphicsImageRenderer(size: CGSize(width: 100, height: 100))
         let dummyImage = renderer.image { context in
@@ -313,21 +313,14 @@ struct StormDocumentationFormView: View {
             description: weatherDescription.isEmpty ? nil : weatherDescription
         )
         
+        
         documentationManager.saveStormDocumentation(
-            photo: dummyImage,
+            photo: image,
             location: location,
             notes: notes,
             stormType: selectedStormType,
             weatherConditions: weatherConditions
         )
-        
-//        documentationManager.saveStormDocumentation(
-//            photo: image,
-//            location: location,
-//            notes: notes,
-//            stormType: selectedStormType,
-//            weatherConditions: weatherConditions
-//        )
         
         isSaving = false
         alertMessage = "Storm documentation saved successfully!"

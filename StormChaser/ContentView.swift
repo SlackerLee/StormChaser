@@ -7,6 +7,7 @@
 
 import SwiftUI
 import CoreData
+import MapKit
 
 struct ContentView: View {
     @State private var isNight: Bool = false
@@ -29,7 +30,16 @@ struct ContentView: View {
                         weatherData: forecastData.first
                     )
                     // City name with fallback
-                    CityTextView(cityName: locationManager.cityName?.isEmpty == false ? locationManager.cityName! : "Canada, CA", timezone: forecastData.first?.timezone ?? "")
+                    NavigationLink(
+                        destination: MapView(
+                            coordinate: locationManager.lastKnownLocation,
+                            cityName: locationManager.cityName ?? "Unknown"
+                        )
+                    ) {
+                        CityTextView(cityName: locationManager.cityName?.isEmpty == false ? locationManager.cityName! : "Canada, CA", timezone: forecastData.first?.timezone ?? "")
+
+                    }
+                    .buttonStyle(PlainButtonStyle()) // Optional: removes default NavigationLink styling
                    
 
                     // 7-Day forecast
@@ -60,7 +70,7 @@ struct ContentView: View {
                         VStack(spacing: 12) {
                             NavigationLink(destination: {
                                 if let lat = locationManager.lastKnownLocation?.latitude,
-                                   let lon = locationManager.lastKnownLocation?.longitude {
+                                    let lon = locationManager.lastKnownLocation?.longitude {
                                     StormDetailView(latitude: lat, longitude: lon)
                                 } else {
                                     NotFoundView()
@@ -123,6 +133,59 @@ struct ContentView: View {
             }
         }
     }
+}
+
+struct MapView: View {
+    let coordinate: CLLocationCoordinate2D?
+    let cityName: String
+
+    @State private var region: MKCoordinateRegion
+
+    var annotation: [CityAnnotation] {
+        if let coordinate = coordinate {
+            return [CityAnnotation(coordinate: coordinate, name: cityName)]
+        } else {
+            return []
+        }
+    }
+
+    init(coordinate: CLLocationCoordinate2D?, cityName: String) {
+        self.coordinate = coordinate
+        self.cityName = cityName
+        if let coordinate = coordinate {
+            _region = State(initialValue: MKCoordinateRegion(
+                center: coordinate,
+                span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
+            ))
+        } else {
+            _region = State(initialValue: MKCoordinateRegion(
+                center: CLLocationCoordinate2D(latitude: 0, longitude: 0),
+                span: MKCoordinateSpan(latitudeDelta: 180, longitudeDelta: 360)
+            ))
+        }
+    }
+
+    var body: some View {
+        ZStack {
+            if let _ = coordinate {
+                Map(coordinateRegion: $region, annotationItems: annotation) { item in
+                    MapMarker(coordinate: item.coordinate, tint: .red)
+                }
+                .edgesIgnoringSafeArea(.all)
+            } else {
+                Text("Location not available")
+                    .foregroundColor(.white)
+            }
+        }
+        .navigationTitle(cityName)
+        .navigationBarTitleDisplayMode(.inline)
+    }
+}
+
+struct CityAnnotation: Identifiable {
+    let id = UUID()
+    let coordinate: CLLocationCoordinate2D
+    let name: String
 }
 
 #Preview {
