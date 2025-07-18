@@ -156,4 +156,16 @@ A comprehensive iOS weather application built with SwiftUI that provides real-ti
 <!---->
 <!------->
 
-**StormChaser** - Your personal weather companion for storm tracking and documentation! 🌩️📱 
+
+## Remarks
+
+This project was developed with assistance from AI tools including ChatGPT and Claude to:
+
+1. **Write README and grammar checking** - Ensuring clear, professional documentation
+2. **Object mapping from HTTP request raw data to data objects** - Converting API responses to Swift data models
+3. **Mirror bugs fixing** - Identifying and resolving code issues and inconsistencies
+4. **SDK and framework guidance** - Researching and implementing specific iOS frameworks including:
+   - **MapKit** - For location visualization and mapping features
+   - **Camera integration** - For storm documentation photo capture
+   - **Core Location** - For GPS and location services
+
